@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesktopPilot AI — Control Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🚀</span>
+                <h2>DesktopPilot AI</h2>
+            </div>
+            
+            <div class="system-status-card">
+                <div class="status-indicator">
+                    <span id="backend-dot" class="dot dot-green"></span>
+                    <span id="backend-status-text">Backend: Online</span>
+                </div>
+                <div class="status-indicator">
+                    <span id="ollama-dot" class="dot dot-orange"></span>
+                    <span id="ollama-status-text">AI Engine: Semantic + LLM</span>
+                </div>
+                <div class="status-indicator">
+                    <span class="dot dot-green"></span>
+                    <span id="tools-count-text">51 Desktop Tools Active</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-btn active" onclick="scrollToSection('capabilities-hub')">✨ 10 Core Capabilities</button>
+                <button class="nav-btn" onclick="runFullDiagnosticSuite()">🧪 Run All-Task Self-Test</button>
+                <button class="nav-btn" onclick="openDocs()">📚 API Docs</button>
+                <button class="nav-btn" onclick="testHealth()">🔄 Refresh Status</button>
+            </nav>
+
+            <div class="safety-badge">
+                <span class="shield-icon">🛡️</span>
+                <div>
+                    <strong>AI Safety Layer Active</strong>
+                    <p>Protected from system file wipes & dangerous commands.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header & Prompt Bar -->
+            <header class="header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h1>Autonomous Desktop Automation</h1>
+                        <p class="subtitle">Voice + Semantic Intent Engine (English & Roman Urdu) • 10 Core Capability Suites</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" id="tts-toggle-btn" class="voice-toggle-btn active" onclick="toggleVoiceOutput()" title="Agent speaks responses out loud">
+                            🔊 Voice Reply: ON
+                        </button>
+                        <button type="button" id="continuous-mic-btn" class="voice-toggle-btn" onclick="toggleContinuousVoice()" title="Hands-free continuous listening mode">
+                            🎙️ Hands-Free Mode: OFF
+                        </button>
+                        <button type="button" class="diagnostic-btn" onclick="runFullDiagnosticSuite()">
+                            🧪 Auto-Test All Capabilities
+                        </button>
+                    </div>
+                </div>
+                
+                <form id="task-form" class="prompt-form">
+                    <input 
+                        type="text" 
+                        id="goal-input" 
+                        placeholder="Type or click 🎤 Mic to speak (e.g. 'Open E drive', 'Open Notepad and type hello', 'Volume down')..." 
+                        required
+                    />
+                    <button type="button" id="mic-btn" class="mic-btn" onclick="toggleMicListening()" title="Click and speak your command">
+                        <span id="mic-icon">🎤</span>
+                        <span id="mic-label">Speak</span>
+                    </button>
+                    <button type="submit" id="run-btn" class="primary-btn">
+                        <span>Execute Goal</span>
+                        <span class="btn-arrow">➔</span>
+                    </button>
+                </form>
+
+                <div class="quick-chips-container" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; color: var(--text-secondary); align-self: center;">Quick Actions:</span>
+                    <button type="button" class="quick-chip" onclick="setGoal('open limerox')">⏱️ Open LimeOx Tracker</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('open limerox and start tracking')">▶️ Start Tracking (LimeOx)</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('open slack')">💬 Open Slack</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('open E DRIVE IN MY PC')">💿 Open E: Drive</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('sleep computer')">💤 Sleep PC</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('restart computer')">🔄 Restart PC</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('shutdown computer')">⏻ Shutdown PC</button>
+                    <button type="button" class="quick-chip" onclick="setGoal('cancel shutdown')">🛑 Cancel Shutdown/Restart</button>
+                </div>
+            </header>
+
+            <!-- Live Telemetry Terminal -->
+            <section class="terminal-section">
+                <div class="terminal-header">
+                    <span>Live Telemetry & Execution Log</span>
+                    <div style="display: flex; gap: 8px;">
+                        <span id="last-tool-badge" class="tool-badge">Ready</span>
+                        <button class="clear-btn" onclick="clearLogs()">Clear</button>
+                    </div>
+                </div>
+                <div class="terminal-body" id="terminal-body">
+                    <div class="log-line system">[SYSTEM] DesktopPilot AI UI ready. Click any capability below or type a command above.</div>
+                </div>
+            </section>
+
+            <!-- 10 Core Capabilities Showcase Grid -->
+            <section class="capabilities-section" id="capabilities-hub">
+                <div class="section-title-row">
+                    <h3>✨ What DesktopPilot AI Can Perform (10 Core Capability Suites)</h3>
+                    <span class="section-hint">Click any command chip inside a card to execute it immediately</span>
+                </div>
+
+                <div class="capabilities-grid">
+                    <!-- 1. Open Anything -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">🚀</span>
+                            <div>
+                                <h4>1. Open Anything</h4>
+                                <p>LimeOx Tracker, Slack, Drives (C:/D:/E:), This PC & Folders</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('open limerox')">⏱️ Open LimeOx Tracker</button>
+                            <button class="cap-chip" onclick="setGoal('open slack')">💬 Open Slack</button>
+                            <button class="cap-chip" onclick="setGoal('open E DRIVE IN MY PC')">💿 Open E: Drive</button>
+                            <button class="cap-chip" onclick="setGoal('open downloads')">📂 Open Downloads</button>
+                            <button class="cap-chip" onclick="setGoal('open my pc')">🖥️ Open This PC</button>
+                            <button class="cap-chip" onclick="setGoal('open notepad')">📝 Notepad</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Search Files & Folders -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">🔍</span>
+                            <div>
+                                <h4>2. Search Files & Folders</h4>
+                                <p>Instant file search by name/extension, preview & path copy</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('find settings.py')">🔎 Find settings.py</button>
+                            <button class="cap-chip" onclick="setGoal('search all py files')">🐍 All .py Files</button>
+                            <button class="cap-chip" onclick="setGoal('dhundo requirements.txt')">📄 requirements.txt</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Smart File Management -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">📁</span>
+                            <div>
+                                <h4>3. Smart File Management</h4>
+                                <p>Copy, Move, Rename, ZIP/Unzip & Auto-Organize Folders</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('organize downloads')">🗂️ Auto-Organize Downloads</button>
+                            <button class="cap-chip" onclick="setGoal('zip logs')">🗜️ Compress Logs to ZIP</button>
+                            <button class="cap-chip" onclick="setGoal('clean temporary files')">🧹 Analyze Disk Temp</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Clipboard AI -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">📋</span>
+                            <div>
+                                <h4>4. Clipboard AI</h4>
+                                <p>Summarize, Translate, Rewrite & Format copied text</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('summarize clipboard')">📝 Summarize Clipboard</button>
+                            <button class="cap-chip" onclick="setGoal('translate clipboard to urdu')">🌐 Translate to Urdu</button>
+                            <button class="cap-chip" onclick="setGoal('rewrite clipboard professionally')">💼 Rewrite Professional</button>
+                            <button class="cap-chip" onclick="setGoal('clipboard to markdown')">📑 Format Markdown</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. Browser Automation -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">🌐</span>
+                            <div>
+                                <h4>5. Browser Automation</h4>
+                                <p>Direct Google & YouTube search workflows in new windows</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('open browser and search pak vs sri lanka test match')">🏏 Search Pak vs SL</button>
+                            <button class="cap-chip" onclick="setGoal('open youtube and search AI Agents')">📺 YouTube: AI Agents</button>
+                            <button class="cap-chip" onclick="setGoal('open github.com')">🐙 Open GitHub</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. Screenshot & Screen Understanding -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">🖥️</span>
+                            <div>
+                                <h4>6. Screen Vision & OCR</h4>
+                                <p>Capture screenshots, extract OCR text & explain active screen</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('take a screenshot')">📸 Take Screenshot</button>
+                            <button class="cap-chip" onclick="setGoal('explain screen')">🧠 Explain My Screen</button>
+                            <button class="cap-chip" onclick="setGoal('extract text from screen')">🔤 Extract Text (OCR)</button>
+                        </div>
+                    </div>
+
+                    <!-- 7. System Control -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">⚙️</span>
+                            <div>
+                                <h4>7. System & Power Control</h4>
+                                <p>Sleep, Restart, Shutdown, Volume, Brightness & RAM Status</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('sleep computer')">💤 Sleep Computer</button>
+                            <button class="cap-chip" onclick="setGoal('restart computer')">🔄 Restart Computer</button>
+                            <button class="cap-chip" onclick="setGoal('shutdown computer')">⏻ Shutdown PC</button>
+                            <button class="cap-chip" onclick="setGoal('cancel shutdown')">🛑 Cancel Shutdown/Restart</button>
+                            <button class="cap-chip" onclick="setGoal('volume up')">🔊 Volume Up</button>
+                            <button class="cap-chip" onclick="setGoal('vlume low')">🔉 Volume Down</button>
+                            <button class="cap-chip" onclick="setGoal('ram usage')">💾 RAM Usage</button>
+                            <button class="cap-chip" onclick="setGoal('empty recycle bin')">🗑️ Empty Recycle Bin</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. AI Writing Assistant -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">✍️</span>
+                            <div>
+                                <h4>8. AI Writing Assistant</h4>
+                                <p>Polish grammar, tone & draft email replies from clipboard</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('improve grammar of clipboard')">✅ Fix Grammar</button>
+                            <button class="cap-chip" onclick="setGoal('rewrite clipboard as email')">📧 Draft Email Reply</button>
+                        </div>
+                    </div>
+
+                    <!-- 9. Download Manager -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">⬇️</span>
+                            <div>
+                                <h4>9. Smart Download Manager</h4>
+                                <p>URL file downloader, yt-dlp media & Downloads sorting</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('organize downloads')">📂 Sort Downloads Folder</button>
+                        </div>
+                    </div>
+
+                    <!-- 10. Multi-Step Workflows -->
+                    <div class="cap-card">
+                        <div class="cap-header">
+                            <span class="cap-icon">🤖</span>
+                            <div>
+                                <h4>10. Multi-Step Workflows</h4>
+                                <p>Launch Tracker & Start Tracking, Notepad Type & Calculator</p>
+                            </div>
+                        </div>
+                        <div class="cap-chips">
+                            <button class="cap-chip" onclick="setGoal('open limerox and start tracking')">▶️ Open Tracker & Start Tracking</button>
+                            <button class="cap-chip" onclick="setGoal('Open Notepad and type DesktopPilot is running autonomously')">📝 Notepad Autonomous Type</button>
+                            <button class="cap-chip" onclick="setGoal('Open Calculator and calculate 25*4')">🧮 Calculator 25*4</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agent Brain Visualizer (Planner -> Executor -> Verifier) -->
+            <section class="brain-section">
+                <h3>Agent Brain Pipeline</h3>
+                <div class="pipeline-grid">
+                    <div class="pipeline-card" id="card-planner">
+                        <div class="card-header">
+                            <span class="card-icon">📋</span>
+                            <h4>1. Semantic Decision Engine</h4>
+                        </div>
+                        <p class="card-desc">Resolves English, Roman Urdu & typos into structured intent</p>
+                        <div class="card-output" id="planner-output">Ready</div>
+                    </div>
+
+                    <div class="pipeline-card" id="card-executor">
+                        <div class="card-header">
+                            <span class="card-icon">⚙️</span>
+                            <h4>2. Native Tool Executor</h4>
+                        </div>
+                        <p class="card-desc">Executes Win32 OS, File, Clipboard & Vision tools</p>
+                        <div class="card-output" id="executor-output">Idle</div>
+                    </div>
+
+                    <div class="pipeline-card" id="card-verifier">
+                        <div class="card-header">
+                            <span class="card-icon">🔍</span>
+                            <h4>3. Output Verifier</h4>
+                        </div>
+                        <p class="card-desc">Validates execution status & streams live telemetry</p>
+                        <div class="card-output" id="verifier-output">Idle</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Human-in-the-Loop Approval Modal -->
+    <div id="approval-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="warning-icon">⚠️</span>
+                <h3>Human-in-the-Loop Approval Required</h3>
+            </div>
+            <p id="approval-prompt-text" class="modal-text">The agent is requesting approval to execute an impactful operation.</p>
+            <div class="token-display">Token: <code id="approval-token-code">CONFIRM-123</code></div>
+            <div class="modal-actions">
+                <button id="reject-btn" class="danger-btn" onclick="resolveApproval(false)">Reject Action</button>
+                <button id="approve-btn" class="success-btn" onclick="resolveApproval(true)">Approve & Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

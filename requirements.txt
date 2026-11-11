@@ -1,0 +1,33 @@
+# DesktopPilot AI - Production Dependencies
+
+# Core Framework & Asynchronous API
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.2
+pydantic-settings>=2.6.0
+python-multipart>=0.0.12
+websockets>=13.1
+httpx>=0.27.2
+
+# LangGraph & Agent Orchestration
+langgraph>=0.2.45
+langchain-core>=0.3.15
+langchain-ollama>=0.2.0
+
+# Desktop GUI Automation & OS Control
+pyautogui>=0.9.54
+pywinauto>=0.6.8; sys_platform == 'win32'
+pillow>=10.4.0
+opencv-python>=4.10.0.84
+
+# Persistence, Vector Memory & Storage
+chromadb>=0.5.15
+sqlalchemy>=2.0.36
+aiosqlite>=0.20.0
+alembic>=1.13.3
+
+# Utilities & Logging
+loguru>=0.7.2
+rich>=13.9.4
+python-dotenv>=1.0.1
+
